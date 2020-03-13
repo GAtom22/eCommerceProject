@@ -1,0 +1,57 @@
+﻿@using eCommerceProject.Models.Home
+@{
+    ViewBag.Title = "CheckoutDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Checkout</h2>
+@if (Session["cart"] == null)
+{
+<div class="alert alert-danger">
+    <strong>No Product Added to Cart</strong>
+</div>
+}
+else
+{
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price ($)</th>
+            <th>Quantity</th>
+            <th>Line Total ($)</th>
+            <th>Add</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int Total = 0;
+        }
+        @foreach (var item in (List<Item>)Session["cart"])
+        {
+            int lineTotal = Convert.ToInt32(item.Product.Price * item.Quantity);
+            Total = Convert.ToInt32(Total+lineTotal);
+            Session["SesTotal"] = Total;
+            <tr>
+                <td>@item.Product.ProductName</td>
+                <td>@item.Product.Price</td>
+                <td>@item.Quantity</td>
+                <td>@lineTotal</td>
+                <td>
+                    <a href="@Url.Action("AddToCart", "Home", new { productId = item.Product.ProductId, url="Checkout" })"><i class="fa fa-plus"></i></a>
+                    <a href="@Url.Action("DecreaseQty", "Home", new { productId = item.Product.ProductId, url="Checkout" })"><i class="fa fa-minus"></i></a>
+                </td>
+            </tr>
+
+        }
+        <tr>
+            <td colspan="4" class="text-right">
+                <b>Total: @Total</b>
+            </td>
+        </tr>
+    </tbody>
+
+</table>
+<a class="btn btn-success" href="@Url.Action("PaymentWithPayPal", "Payment")" style="margin-bottom: 20px;">Checkout >></a>
+
+}

@@ -1,0 +1,130 @@
+﻿
+@using eCommerceProject.Models.Home
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - eCommerceProject</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/mainLayout.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="card" style="background-color: gainsboro; width: 90vw;margin:auto;border-radius:10px;-webkit-box-shadow: 10px 10px 43px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 10px 10px 43px 0px rgba(0,0,0,0.75);
+box-shadow: 10px 10px 43px 0px rgba(0,0,0,0.75);">
+        <div class="container" style="padding-top: 10px;">
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <div class="logo" style="        margin: auto;
+        padding-top: 10px;">
+                        <a href=@Url.Action("Index","Home")>
+                            <img src="~/Img/eCommerceLogo.svg" style="width:60px;" />
+                        </a>
+                        <span style="font-family:Helvetica; font-size:22px;position:relative;left: 15px;font-weight:bold;">eCommerce Project</span>
+                    </div>
+                </div>
+                @{ 
+                    List<Item> ProdList = new List<Item>();
+                    int itemsNum = 0;
+                }
+                @if (Session["cart"] != null)
+                {
+                    ProdList = (List<Item>)Session["cart"];
+                    foreach (var item in ProdList)
+                    {
+                        itemsNum += item.Quantity;
+                    }
+                    
+                }
+
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="fas fa-shopping-cart"></i><span class="badge">@itemsNum</span> <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                @if (Session["cart"] != null)
+                                {
+                                    foreach (var item in @ProdList)
+                                    {
+                                        <li><a href=@Url.Action("RemoveFormCart","Home",new { productId = item.Product.ProductId })>@item.Product.ProductName (@item.Quantity)<i class="fa fa-times"></i></a></li>
+                                    }
+                                }
+                                <li>
+                                    <a href=@Url.Action("CheckoutDetails","Home")>Checkout</a>
+                                </li>
+                            </ul>
+                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+
+                            using (Html.BeginForm("LogOff", "Account", FormMethod.Post))
+                            {
+                                <li class="nav-item">
+                                    <button type="submit" class="nav-link" data-slide="true" style="border:none; background-color:transparent;">
+                                        Logout
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </button>
+                                    @*<a  type="submit" class="nav-link" data-widget="control-sidebar" data-slide="true" >
+                        Logout
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>*@
+                                </li>
+                            }
+
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href=@Url.Action("Login", "Account")>
+                                    Login
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="nav-menus">
+                        <ul class="nav nav-pills">
+                            <li class="main-opts active" data-toggle="link"><a href=@Url.Action("Index","Home") style="border-radius:initial;">Home</a></li>
+                            <li class="main-opts" data-toggle="link"><a href=@Url.Action("Products","Home") style="border-radius: initial;">Products</a></li>
+                            <li class="main-opts" data-toggle="link"><a href=@Url.Action("About","Home") style="border-radius:initial;">About</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            @RenderBody()
+        </div>
+        </div>
+            <hr />
+            <footer>
+                <div class="row" style="text-align:center;">
+                    <div class="col-md-12">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <p>&copy; @DateTime.Now.Year - Online Shopping Store. All rights reserved</p>
+                    </div>
+                    <div class="col-md-12 copyright">
+                        <div class="col-md-6 col-sm-6 copyright-right"></div>
+                        <ul class="list-unstyled list-social">
+                            <li><a href="#" target="_blank"><i  style="margin-top:4px;" class="fab fa-facebook-square"></i></a>  </li>
+                            <li><a href="#" target="_blank"><i style="margin-top:4px;" class="fab fa-linkedin"></i></a>  </li>
+                            <li><a href="#" target="_blank"><i style="margin-top:4px;" class="fab fa-github"></i></a>  </li>
+                        </ul>
+                    </div>
+                </div>
+        
+        </footer>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
